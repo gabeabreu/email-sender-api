@@ -14,12 +14,12 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-async function sendMail(transporter, content) {
+async function sendMail(transporter, content, to) {
   try {
     await transporter.sendMail(
       {
         from: process.env.HOST_USER,
-        to: 'gabriel010101@gmail.com',
+        to: to,
         subject: 'Resposta M2A',
         text: content,
       },
@@ -33,18 +33,10 @@ async function sendMail(transporter, content) {
   }
 }
 
-async function mail(content) {
-  try {
-    await sendMail(transporter, content);
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 const port = 8000;
 
 app.post('/email', jsonParser, (req, res) => {
-  mail(req.body.text);
+  sendMail(transporter, req.body.text, req.body.to);
   // console.log(req.body.text);
   res.status(200).send(req.body);
 });
